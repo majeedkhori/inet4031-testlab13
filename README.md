@@ -7,40 +7,98 @@ Flask, and MariaDB. These will be packaged into separate containers and wired to
 
 The application code and scaffolding are provided. Your job is to complete the Dockerfiles, verify the stack runs correctly, and document your work below.
 
-> **Directions and explanations for this lab are on the repository Wiki.**
-> Refer to the Wiki pages for step-by-step instructions.
-
----
-
-*The sections below are for you to fill out. Replace each placeholder with your own content before submitting. Having a detailed README is the best practice for showing your work in future GitHub repositories.*
+> **Directions and explanations for this lab are on the original inet-4031-testlab12 repository Wiki.**
+> Refer to the Wiki pages at https://github.com/Programming-Mellow/inet4031-testlab12 for step-by-step instructions.
 
 ---
 
 # Project Overview
 
-<!-- Briefly describe what this application does in your own words.
-     What problem does it solve? What does a user interact with? -->
+This project is a three-tie containerized web application:
+
+- Frontend (Apache Web Server): Serves static content and sends requests to Flask.
+- Backend (Flask): Handles site logic and API requests.
+- MariaDB (Database): Stores ticket data.
+
+When you open the site in a browser, Apache recevies the request, sends it to Flask, and Flask communicates with the datbase as needed.
 
 # Prerequisites
 
-<!-- List what needs to be installed or configured on the VM before this lab
-     will work. Include Docker, Docker Compose, and anything else required. -->
+- Install Visual Studio Code
+- Install Remote - SSH on VS Code
+- Create/configure a Linux Ubuntu VM
+- Install Docker and Docker Compose
+- Install Git
 
 # Getting Started
 
-<!-- Explain how a new teammate would bring this stack up from a fresh clone.
-     Walk through every command they need to run, in order. -->
+To run the project:
 
+```bash
+# Clone the repo
+git clone https://github.com/Programming-Mellow/inet4031-testlab12.git
+
+# Go into the folder
+cd inet4031-testlab12
+
+# Start up with Docker Compose
+sudo docker compose up --build -d
+
+# Confirm containers are running/healthy
+sudo docker compose ps
+```
 # Configuration
 
-<!-- Explain the .env file: what it is, what variables it contains,
-     and what a teammate needs to provide that is not in this repository. -->
+This project uses a .env file for database configuration. The .env file contains database name, database user, database password, and root password for MariaDB. These values allow Flask to connect to the database.
+
+Add .env to a .gitignore file. Do NOT upload your .env file to GitHub as it contains sensitive info.
 
 # Verification
 
-<!-- Describe how to confirm the stack is running correctly.
-     Reference the check script and what a passing run looks like. -->
+To confirm everything is working properly:
 
-# Feedback (Optional)
+Run the test script:
 
-<!-- Do you have any feedback you would like to give us after completing this lab? What are some things you enjoyed? What about others that you felt was lackluster? Or maybe there was something that we missed that you'd love for us to touch on! This will help us improve the INET 4031 lab experience. We appreciate everything we can get!  -->
+```bash
+sudo ./check-lab.sh
+```
+
+# Kubernetes Lab: Running the Application with k3s/Desired State (Lab 13)
+
+In this lab, the application was migrated from Docker Compose to Kubernetes using k3s. Instead of manually managing containers, Kubernetes uses a desired state model where it continuously ensures that the correct number of Pods, Services, and storage resources are running.
+
+The same three-tier application was reused from Lab 12, but each component was converted into Kubernetes resources:  
+
+Kubernetes automatically handles restarting failed containers, networking between services, and maintaining application state.
+
+---
+
+# Deployment Instructions
+
+To deploy the application to Kubernetes:
+
+```bash
+kubectl apply -f k8s/
+```
+
+To check that everything is running:
+
+```bash
+kubectl get pods -n ticket-app
+kubectl get services -n ticket-app
+kubectl get pvc -n ticket-app
+```
+To watch pods start up in real time:
+
+```bash
+kubectl get pods -n ticket-app -w
+```
+To access the dashboard:
+
+Naviagate to your browser and enter "http://<VM-IP>:30080", replacing <VM-IP> with YOUR VM's IP address.
+
+# What Changed
+
+- Docker Compose runs containers manually on a single machine.
+- Kubernetes continuously enforces a desired state instead of running one-time commands.
+- If a container or Pod fails, Kubernetes automatically recreates it.
