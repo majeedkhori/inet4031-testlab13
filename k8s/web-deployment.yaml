@@ -12,20 +12,20 @@ metadata:
   name: web
   namespace: ticket-app
 spec:
-  replicas: ___             # FILL IN: 1
+  replicas: 1
   selector:
     matchLabels:
-      app: ___              # FILL IN: web
+      app: web
   template:
     metadata:
       labels:
-        app: ___            # FILL IN: web  (must match matchLabels above)
+        app: web
     spec:
       containers:
         - name: web
-          image: ___        # FILL IN: YOUR_DOCKERHUB_USERNAME/apache-web:latest
+          image: majeedkhori/apache-web:latest
           ports:
-            - containerPort: ___ # FILL IN: 80
+            - containerPort: 80
 
 ---
 
@@ -37,8 +37,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: ___                # FILL IN: web
+    app: web
   ports:
-    - port: ___             # FILL IN: 80
-      targetPort: ___       # FILL IN: 80
+    - port: 80
+      targetPort: 80
       nodePort: 30080       # External port on your VM — http://<VM-IP>:30080
